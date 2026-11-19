@@ -1,0 +1,10 @@
+# Regular expressions used to extract candidate addresses.
+# btc is the pattern of scripts/01_extract_addresses.py (BTC_PATTERN), which produced the released candidates.
+# The other patterns are those of the multi-currency extraction script (Cryptocurrency_home/extract_regex.py),
+# which is not included here; they match the paper's regex table. That script also defines dogecoin, xrp and
+# solana patterns, which the paper does not list.
+btc: '(?:bc1[0-9a-z]{25,59}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})'
+ltc: '(?:ltc1[0-9a-z]{39,59}|[LM3][a-km-zA-HJ-NP-Z1-9]{26,33})'
+eth: '(0x[a-fA-F0-9]{40})'
+dash: 'X[1-9A-HJ-NP-Za-km-z]{33}'      # paper table: [X7][1-9A-HJ-NP-Za-km-z]{33}
+xmr: '(?:4[0-9AB][1-9A-HJ-NP-Za-km-z]{93}|4[1-9A-HJ-NP-Za-km-z]{105})'

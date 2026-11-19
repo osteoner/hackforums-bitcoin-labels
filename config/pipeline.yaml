@@ -1,0 +1,41 @@
+# Settings as they appear in the code of this repository (not re-tuned).
+# Lines marked "paper:" show where the paper text describes something different.
+
+source:
+  database: crimebb2                 # local PostgreSQL copy of the CrimeBB HackForums data (DUA, not redistributed)
+  extraction_inputs:
+    - posts.content
+    - contracts.maker_payment_info
+    - contracts.accepter_payment_info
+
+onchain_validation:                  # scripts/01_extract_addresses.py
+  currency: BTC
+  api: https://blockstream.info/api/address/{address}
+  valid_if: HTTP 200
+  candidate_if: chain_stats.tx_count > 0   # stored as crypto.is_transaction = true
+  # paper: Blockchair / Etherscan APIs, queried 11-12 May 2025 (the script file is dated 2025-07-10)
+
+context:                             # scripts/04_run_llm_screening.py
+  max_posts_per_address: 20
+  post_order: newest_first           # ORDER BY created_on DESC
+  # paper: "prioritizing its earliest appearances in posts and contracts"
+  window_chars_each_side: 200
+  address_not_found_fallback: first 500 characters of the post
+  posts_joined_with: " | "
+  max_context_chars: 8000            # longer contexts are cut and marked [TRUNCATED]
+  addresses_without_posts: not sent to the LLM, stored as label 'No Posts' / 'legitimate'
+
+llm:
+  backend: ollama
+  models_in_code: [qwen3:30b]        # deepseek-r1:70b is commented out in the code ...
+  models_in_released_outputs: [qwen3:30b, deepseek-r1:70b]   # ... but 9,524 addresses carry votes from both
+  # paper: Qwen3-30B only
+  temperature: 0.3
+  response_format: json
+  timeout_s: 60
+  max_retries: 3
+  steps:
+    - illicit_yes_no                 # prompt 1 in prompts/illicit_address_screening.txt
+    - illicit_category               # prompt 2, only when at least one model answered Yes
+    - legitimate_usage_context       # prompt 3, only when no model answered Yes
+  illicit_if: yes_votes >= 1

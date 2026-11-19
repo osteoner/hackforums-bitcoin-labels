@@ -1,0 +1,15 @@
+category,n_addresses,share_pct
+Fraud,866,35.52
+Investment,350,14.36
+Malware,330,13.54
+Services,294,12.06
+Laundering,192,7.88
+Unmapped,129,5.29
+Account Selling,88,3.61
+Unclear,88,3.61
+Membership,53,2.17
+Card Dumps,16,0.66
+Abuse,15,0.62
+Drugs,13,0.53
+Weapons,3,0.12
+Counterfeit,1,0.04
